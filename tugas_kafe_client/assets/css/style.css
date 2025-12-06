@@ -1,0 +1,787 @@
+/* Global Styles - Starbucks Color Palette */
+:root {
+    --starbucks-green: #006241;
+    --accent-green: #d4e9e2;
+    --black: #000000;
+    --white: #ffffff;
+    --gold: #cba258;
+    --brown: #1e3932;
+    --gray-light: #f9f9f9;
+    --gray-medium: #f1f8f5;
+    --gray-dark: #d8d8d8;
+
+    /* Bootstrap Override Colors */
+    --primary-color: var(--starbucks-green);
+    --secondary-color: var(--brown);
+    --success-color: var(--starbucks-green);
+    --warning-color: var(--gold);
+    --danger-color: #dc3545;
+    --info-color: var(--brown);
+    --light-color: var(--gray-light);
+    --dark-color: var(--black);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gray-light);
+    color: var(--black);
+}
+
+/* Hero Section - Starbucks Style */
+.hero-section {
+    background: linear-gradient(135deg, var(--starbucks-green) 0%, var(--brown) 100%);
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,154.7C672,160,768,192,864,197.3C960,203,1056,181,1152,165.3C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+    background-size: cover;
+}
+
+/* Card Styles */
+.menu-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.menu-image {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.menu-card:hover .menu-image {
+    transform: scale(1.05);
+}
+
+/* Button Styles - Starbucks Theme */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--starbucks-green) 0%, #004d2f 100%);
+    border: none;
+    color: var(--white);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #004d2f 0%, var(--starbucks-green) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 98, 65, 0.3);
+    color: var(--white);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--gold) 0%, #b8923f 100%);
+    border: none;
+    color: var(--black);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #b8923f 0%, var(--gold) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(203, 162, 88, 0.3);
+    color: var(--black);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--starbucks-green) 0%, var(--brown) 100%);
+    border: none;
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--brown) 0%, var(--starbucks-green) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 98, 65, 0.3);
+    color: var(--white);
+}
+
+/* Navbar - Starbucks Theme */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--starbucks-green) !important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    font-weight: 500;
+    transition: color 0.3s ease;
+    color: var(--brown) !important;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--starbucks-green) !important;
+}
+
+/* Light Mode Footer Text */
+footer.bg-light {
+    color: var(--black);
+}
+
+footer.bg-light h5,
+footer.bg-light .text-muted {
+    color: var(--brown) !important;
+}
+
+/* Card Statistics - Starbucks Theme */
+.card-stat {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    background: var(--white);
+    border-left: 4px solid var(--starbucks-green);
+}
+
+.card-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 98, 65, 0.15);
+    border-left-color: var(--gold);
+}
+
+.card-stat .card-body {
+    padding: 1.5rem;
+}
+
+.card-stat h6 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    color: var(--brown);
+}
+
+.card-stat h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    color: var(--starbucks-green);
+}
+
+.card-stat.order-pending { border-left-color: var(--gold); }
+.card-stat.order-proses { border-left-color: var(--brown); }
+.card-stat.order-siap { border-left-color: var(--starbucks-green); }
+.card-stat.order-selesai { border-left-color: var(--gray-dark); }
+
+/* Badge Styles */
+.badge {
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.5em 0.8em;
+}
+
+/* Toast Notifications */
+.toast-container {
+    z-index: 9999;
+}
+
+.toast {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.modal-header {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Form Styles - Starbucks Theme */
+.form-control {
+    border-radius: 8px;
+    border: 2px solid var(--gray-dark);
+    transition: all 0.3s ease;
+    background-color: var(--white);
+    color: var(--black);
+}
+
+.form-control:focus {
+    border-color: var(--starbucks-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 98, 65, 0.25);
+    background-color: var(--white);
+}
+
+.form-select {
+    border-radius: 8px;
+    border: 2px solid var(--gray-dark);
+    transition: all 0.3s ease;
+    background-color: var(--white);
+    color: var(--black);
+}
+
+.form-select:focus {
+    border-color: var(--starbucks-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 98, 65, 0.25);
+    background-color: var(--white);
+}
+
+/* Input Group */
+.input-group-text {
+    background-color: var(--light-color);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px 0 0 8px;
+}
+
+/* Table Styles */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: var(--light-color);
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Loading Spinner */
+.spinner-border {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Empty States */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.empty-state i {
+    opacity: 0.3;
+    margin-bottom: 1rem;
+}
+
+/* Responsive Images */
+.img-fluid {
+    border-radius: 8px;
+}
+
+/* Tabs - Starbucks Theme */
+.nav-tabs {
+    border-bottom: 2px solid var(--gray-dark);
+    background-color: var(--white);
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--brown);
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+    background-color: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+    border-bottom-color: var(--accent-green);
+    color: var(--starbucks-green);
+    background-color: var(--gray-medium);
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom-color: var(--starbucks-green);
+    color: var(--starbucks-green);
+    background-color: var(--gray-medium);
+    font-weight: 600;
+}
+
+/* Progress Bar */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+}
+
+.progress-bar {
+    border-radius: 4px;
+}
+
+/* Order Status Timeline */
+.order-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.order-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e0e0e0;
+}
+
+.order-timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.order-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    border: 2px solid white;
+}
+
+.order-timeline-item.active::before {
+    background-color: var(--success-color);
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+#dailyOrdersChart {
+    max-height: 250px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .btn,
+    .modal,
+    .toast-container {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+    }
+}
+
+/* Light Mode Only - No Dark Mode Support */
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+
+    .card-stat {
+        margin-bottom: 1rem;
+    }
+
+    .btn-group-vertical .btn {
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-dialog {
+        margin: 1rem;
+    }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+
+/* Utility Classes */
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.border-gradient {
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) border-box;
+    border: 3px solid transparent;
+}
+
+.shadow-lg-custom {
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+/* Special Effects */
+.glow {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.glow:hover {
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+}
+
+/* Menu Category Headers - Starbucks Theme */
+.menu-category-header {
+    background: linear-gradient(135deg, var(--starbucks-green) 0%, var(--brown) 100%);
+    color: var(--white);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 98, 65, 0.2);
+}
+
+/* Order Cards Animation */
+.order-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.order-card:nth-child(1) { animation-delay: 0.1s; }
+.order-card:nth-child(2) { animation-delay: 0.2s; }
+.order-card:nth-child(3) { animation-delay: 0.3s; }
+.order-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Status Card Border Indicators */
+.card-stat.order-pending { border-left: 4px solid var(--gold); }
+.card-stat.order-proses { border-left: 4px solid var(--brown); }
+.card-stat.order-siap { border-left: 4px solid var(--starbucks-green); }
+.card-stat.order-selesai { border-left: 4px solid var(--gray-dark); }
+
+/* Order Status Cards */
+.order-card.order-pending {
+    border-left: 4px solid var(--gold);
+    background: linear-gradient(135deg, var(--gray-light) 0%, rgba(203, 162, 88, 0.1) 100%);
+}
+.order-card.order-proses {
+    border-left: 4px solid var(--brown);
+    background: linear-gradient(135deg, var(--gray-light) 0%, rgba(30, 57, 26, 0.1) 100%);
+}
+.order-card.order-siap {
+    border-left: 4px solid var(--starbucks-green);
+    background: linear-gradient(135deg, var(--gray-light) 0%, rgba(0, 98, 65, 0.1) 100%);
+}
+.order-card.order-selesai {
+    border-left: 4px solid var(--gray-dark);
+    background: linear-gradient(135deg, var(--gray-light) 0%, rgba(108, 117, 125, 0.1) 100%);
+}
+
+/* Success Animation */
+.success-checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    margin: 10% auto;
+    box-shadow: inset 0px 0px 0px var(--starbucks-green);
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+
+/* Checkmark Animation */
+@keyframes draw-checkmark {
+    0% {
+        stroke-dasharray: 0 166;
+        stroke-dashoffset: 166;
+    }
+    50% {
+        stroke-dasharray: 0 166;
+        stroke-dashoffset: 0;
+        stroke-dasharray: 41 100;
+        stroke-dashoffset: 80;
+    }
+    100% {
+        stroke-dasharray: 41 100;
+        stroke-dashoffset: 0;
+    }
+}
+
+.order-card.order-selesai .card-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.order-card.order-selesai .card-header::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background-color: var(--starbucks-green);
+    border-radius: 50%;
+    opacity: 0;
+    animation: draw-checkmark 0.6s ease-in-out 0.4s forwards;
+}
+
+.order-card.order-selesai .card-header::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    animation: show-checkmark 0.3s ease-out 0.4s forwards;
+}
+
+@keyframes show-checkmark {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.success-checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: var(--starbucks-green);
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.success-checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+    0%, 100% {
+        transform: none;
+    }
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px var(--starbucks-green);
+    }
+}
+
+/* Additional Starbucks Theme Overrides */
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    background-color: var(--white);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0, 98, 65, 0.15);
+}
+
+.table {
+    background-color: var(--white);
+}
+
+.table thead th {
+    background-color: var(--gray-medium);
+    color: var(--brown);
+    border-bottom: 2px solid var(--starbucks-green);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--starbucks-green) 0%, var(--brown) 100%);
+    color: var(--white);
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* Custom scrollbar with Starbucks theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--starbucks-green);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--brown);
+}
+
+/* Loading spinner with Starbucks green */
+.spinner-border {
+    color: var(--starbucks-green);
+}
+
+/* Toast notifications with Starbucks theme */
+.toast {
+    background: var(--white);
+    border: 1px solid var(--gray-dark);
+}
+
+.toast.bg-success {
+    background: var(--starbucks-green) !important;
+}
+
+.toast.bg-danger {
+    background: #dc3545 !important;
+}
+
+/* Dashboard specific Starbucks theming */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--starbucks-green) 0%, var(--brown) 100%);
+}
+
+.login-container .login-card {
+    border: 1px solid var(--gray-dark);
+    box-shadow: 0 20px 40px rgba(0, 98, 65, 0.1);
+}
+
+/* Price display */
+.text-success, .h5.text-success {
+    color: var(--starbucks-green) !important;
+}
+
+/* Status badges */
+.badge.bg-success {
+    background-color: var(--starbucks-green) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--gold) !important;
+    color: var(--black) !important;
+}
+
+.badge.bg-info {
+    background-color: var(--brown) !important;
+}
+
+.badge.bg-secondary {
+    background-color: var(--gray-dark) !important;
+    color: var(--black) !important;
+}

@@ -1,0 +1,103 @@
+<?php
+// include database and object files
+require_once '../../config/database.php';
+
+// Check if it's a POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    jsonResponse(false, "Method tidak diizinkan", null, 405);
+}
+
+try {
+    // Handle different content types
+    if (strpos($_SERVER['CONTENT_TYPE'], 'multipart/form-data') !== false) {
+        // File upload request
+        $nama_menu = sanitizeInput($_POST['nama_menu'] ?? '');
+        $harga = sanitizeInput($_POST['harga'] ?? '');
+        $id_kategori = sanitizeInput($_POST['id_kategori'] ?? '');
+        $status_tersedia = isset($_POST['status_tersedia']) ? (bool)$_POST['status_tersedia'] : true;
+
+        $data = [
+            'nama_menu' => $nama_menu,
+            'harga' => $harga,
+            'id_kategori' => $id_kategori,
+            'status_tersedia' => $status_tersedia
+        ];
+    } else {
+        // JSON request
+        $data = getPostData();
+    }
+
+    // Validate required fields
+    validateRequired($data, ['nama_menu', 'harga', 'id_kategori']);
+
+    // Sanitize input
+    $nama_menu = sanitizeInput($data['nama_menu']);
+    $harga = sanitizeInput($data['harga']);
+    $id_kategori = sanitizeInput($data['id_kategori']);
+    $status_tersedia = isset($data['status_tersedia']) ? (bool)$data['status_tersedia'] : true;
+
+    // Convert harga to numeric and validate
+    $harga_numeric = is_numeric($harga) ? (float)$harga : 0;
+
+    // Debug log
+    error_log("DEBUG: harga_original = " . var_export($harga, true));
+    error_log("DEBUG: harga_numeric = " . var_export($harga_numeric, true));
+
+    if ($harga_numeric <= 0) {
+        error_log("DEBUG: Harga validation failed - harga_numeric = $harga_numeric");
+        jsonResponse(false, "Harga harus berupa angka positif", null, 400);
+    }
+
+    $conn = getConnection();
+
+    // Check if menu already exists
+    $check_sql = "SELECT id_menu FROM menus WHERE nama_menu = :nama_menu";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bindParam(':nama_menu', $nama_menu);
+    $check_stmt->execute();
+
+    if ($check_stmt->rowCount() > 0) {
+        jsonResponse(false, "Menu dengan nama tersebut sudah ada", null, 400);
+    }
+
+    // Handle image upload if exists
+    $gambar = null;
+    if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
+        $upload_dir = '/opt/lampp/htdocs/tugas_kafe_server/uploads';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        $gambar = uploadImage($_FILES['gambar'], $upload_dir);
+    }
+
+    // Insert menu
+    $sql = "INSERT INTO menus (nama_menu, harga, id_kategori, gambar, status_tersedia)
+            VALUES (:nama_menu, :harga, :id_kategori, :gambar, :status_tersedia)";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':nama_menu', $nama_menu);
+    $stmt->bindParam(':harga', $harga_numeric, PDO::PARAM_STR); // Use harga_numeric
+    $stmt->bindParam(':id_kategori', $id_kategori);
+    $stmt->bindParam(':gambar', $gambar);
+    $stmt->bindParam(':status_tersedia', $status_tersedia, PDO::PARAM_BOOL);
+
+    if ($stmt->execute()) {
+        $id_menu = $conn->lastInsertId();
+        $response_data = [
+            'id_menu' => $id_menu,
+            'nama_menu' => $nama_menu,
+            'harga' => $harga,
+            'harga_formatted' => formatRupiah($harga),
+            'id_kategori' => $id_kategori,
+            'gambar' => $gambar ? 'http://localhost/tugas_kafe_server/uploads/' . $gambar : null,
+            'status_tersedia' => $status_tersedia
+        ];
+        jsonResponse(true, "Menu berhasil ditambahkan", $response_data, 201);
+    } else {
+        jsonResponse(false, "Gagal menambahkan menu", null, 500);
+    }
+
+} catch(PDOException $e) {
+    jsonResponse(false, "Error: " . $e->getMessage(), null, 500);
+}
+?>

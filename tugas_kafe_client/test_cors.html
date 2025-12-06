@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <script src="config.js"></script>
+</head>
+<body>
+    <h1>CORS Test Page</h1>
+    <button onclick="testCORS()">Test CORS API</button>
+    <button onclick="testOrderAPI()">Test Orders API</button>
+    <div id="result"></div>
+
+    <script>
+        function testCORS() {
+            document.getElementById('result').innerHTML = 'Testing CORS...';
+
+            fetch(API_CONFIG.SERVER_URL + '/api/orders/cors_test.php', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                console.error('CORS Error:', error);
+                document.getElementById('result').innerHTML = '<div style="color: red;">CORS Error: ' + error.message + '</div>';
+            });
+        }
+
+        function testOrderAPI() {
+            document.getElementById('result').innerHTML = 'Testing Orders API...';
+
+            fetch(API_CONFIG.ENDPOINTS.ORDERS.READ + '?limit=5', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                console.error('Orders API Error:', error);
+                document.getElementById('result').innerHTML = '<div style="color: red;">Orders API Error: ' + error.message + '</div>';
+            });
+        }
+    </script>
+</body>
+</html>

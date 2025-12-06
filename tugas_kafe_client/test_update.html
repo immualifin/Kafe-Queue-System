@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Update Upload</title>
+</head>
+<body>
+    <h1>Test Update Menu dengan Upload Gambar</h1>
+
+    <p>Menu ID to Update: <input type="number" id="menuId" value="27"></p>
+    <form id="updateForm" enctype="multipart/form-data">
+        <p>Nama Menu: <input type="text" id="nama_menu" value="Update Test from Browser"></p>
+        <p>Harga: <input type="number" id="harga" value="42000"></p>
+        <p>Kategori: <input type="number" id="id_kategori" value="3"></p>
+        <p>Gambar: <input type="file" id="gambar" accept="image/*"></p>
+        <p>Status: <input type="checkbox" id="status_tersedia" checked></p>
+        <button type="button" onclick="testUpdate()">Update with Upload Test</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        async function testUpdate() {
+            const menuId = document.getElementById('menuId').value;
+            const nama_menu = document.getElementById('nama_menu').value;
+            const harga = document.getElementById('harga').value;
+            const id_kategori = document.getElementById('id_kategori').value;
+            const status_tersedia = document.getElementById('status_tersedia').checked;
+            const gambarInput = document.getElementById('gambar');
+
+            const hasFile = gambarInput.files && gambarInput.files.length > 0;
+
+            if (!menuId) {
+                document.getElementById('result').innerHTML = '<p style="color: red;">Masukkan Menu ID!</p>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.set('nama_menu', nama_menu);
+            formData.set('harga', harga);
+            formData.set('id_kategori', id_kategori);
+            formData.set('status_tersedia', status_tersedia);
+
+            if (hasFile) {
+                formData.set('gambar', gambarInput.files[0]);
+                console.log('Updating with file:', gambarInput.files[0]);
+            } else {
+                console.log('Updating without file');
+            }
+
+            try {
+                const url = `http://192.168.1.25/tugas_kafe_server/api/menus/update.php?id=${menuId}`;
+                console.log('Updating to:', url);
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                document.getElementById('result').innerHTML = `
+                    <h3>Update Result:</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+
+                if (result.success && result.data.gambar) {
+                    document.getElementById('result').innerHTML += `
+                        <h3>Updated Image:</h3>
+                        <img src="${result.data.gambar}" style="max-width: 300px; border: 1px solid #ccc;">
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

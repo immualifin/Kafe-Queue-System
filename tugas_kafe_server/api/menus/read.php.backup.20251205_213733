@@ -1,0 +1,70 @@
+<?php
+// include database and object files
+require_once '../../config/database.php';
+
+try {
+    $conn = getConnection();
+
+    // Query untuk mendapatkan semua menu dengan kategori
+    $sql = "SELECT m.*, km.nama_kategori, km.icon
+            FROM menus m
+            JOIN kategori_menu km ON m.id_kategori = km.id_kategori
+            WHERE m.status_tersedia = TRUE
+            ORDER BY km.nama_kategori, m.nama_menu";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    $menus = $stmt->fetchAll();
+
+    // Group by kategori
+    $grouped_menus = [];
+    foreach ($menus as $menu) {
+        $kategori = $menu['nama_kategori'];
+        $id_kategori = $menu['id_kategori'];
+
+        if (!isset($grouped_menus[$kategori])) {
+            $grouped_menus[$kategori] = [
+                'kategori' => $kategori,
+                'id_kategori' => $id_kategori,
+                'icon' => $menu['icon'],
+                'items' => []
+            ];
+        }
+
+        // Handle gambar dengan fallback
+        $image_url = null;
+        if ($menu['gambar']) {
+            $image_path = $_SERVER['DOCUMENT_ROOT'] . '/tugas_kafe_server/uploads/' . $menu['gambar'];
+            if (file_exists($image_path)) {
+                $image_url = 'http://localhost/tugas_kafe_server/uploads/' . $menu['gambar'];
+            } else {
+                // Fallback ke default food image
+                $image_url = 'http://localhost/tugas_kafe_server/uploads/default_food.jpg';
+            }
+        } else {
+            // Fallback ke placeholder jika tidak ada gambar sama sekali
+            $image_url = 'https://via.placeholder.com/400x300/006241/ffffff?text=' . urlencode($menu['nama_menu']);
+        }
+
+        $grouped_menus[$kategori]['items'][] = [
+            'id_menu' => $menu['id_menu'],
+            'nama_menu' => $menu['nama_menu'],
+            'harga' => $menu['harga'],
+            'harga_formatted' => formatRupiah($menu['harga']),
+            'gambar' => $image_url,
+            'status_tersedia' => $menu['status_tersedia'],
+            'id_kategori' => $menu['id_kategori'],
+            'nama_kategori' => $menu['nama_kategori']
+        ];
+    }
+
+    // Convert to array
+    $result = array_values($grouped_menus);
+
+    jsonResponse(true, "Data menu berhasil diambil", $result);
+
+} catch(PDOException $e) {
+    jsonResponse(false, "Error: " . $e->getMessage(), null, 500);
+}
+?>

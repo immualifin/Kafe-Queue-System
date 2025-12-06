@@ -1,0 +1,177 @@
+<?php
+// include database and object files
+require_once '../../config/database.php';
+
+// Check if it's a PUT request
+if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
+    jsonResponse(false, "Method tidak diizinkan", null, 405);
+}
+
+// Get id_menu from URL
+$id_menu = isset($_GET['id']) ? (int)$_GET['id'] : null;
+if (!$id_menu) {
+    jsonResponse(false, "ID menu tidak valid", null, 400);
+}
+
+try {
+    // Handle different content types
+    if (strpos($_SERVER['CONTENT_TYPE'], 'multipart/form-data') !== false) {
+        // File upload request
+        $nama_menu = sanitizeInput($_POST['nama_menu'] ?? '');
+        $harga = sanitizeInput($_POST['harga'] ?? '');
+        $id_kategori = sanitizeInput($_POST['id_kategori'] ?? '');
+        $status_tersedia = isset($_POST['status_tersedia']) ? (bool)$_POST['status_tersedia'] : true;
+
+        $data = [
+            'nama_menu' => $nama_menu,
+            'harga' => $harga,
+            'id_kategori' => $id_kategori,
+            'status_tersedia' => $status_tersedia
+        ];
+    } else {
+        // JSON request
+        $data = getPostData();
+    }
+
+    // Sanitize input
+    $nama_menu = isset($data['nama_menu']) ? sanitizeInput($data['nama_menu']) : null;
+    $harga = isset($data['harga']) ? sanitizeInput($data['harga']) : null;
+    $id_kategori = isset($data['id_kategori']) ? sanitizeInput($data['id_kategori']) : null;
+    $status_tersedia = isset($data['status_tersedia']) ? (bool)$data['status_tersedia'] : null;
+
+    // Convert harga to numeric and validate
+    $harga_numeric = null;
+    if ($harga !== null && $harga !== '') {
+        // Clean harga string: remove currency formatting
+        $harga_clean = preg_replace('/[^0-9.,]/', '', $harga);
+
+        // Handle both Indonesian (1.234,56) and international (1,234.56) formats
+        if (strpos($harga_clean, '.') !== false && strpos($harga_clean, ',') !== false) {
+            // If both exist, assume Indonesian format (1.234,56)
+            $harga_clean = str_replace('.', '', $harga_clean); // Remove thousand separator
+            $harga_clean = str_replace(',', '.', $harga_clean); // Convert decimal to dot
+        } elseif (strpos($harga_clean, ',') !== false) {
+            // If only comma exists, could be decimal (1,234) or Indonesian decimal (1,56)
+            // Check if comma is likely decimal (less than 3 digits at end)
+            if (preg_match('/,\d{1,2}$/', $harga_clean)) {
+                $harga_clean = str_replace(',', '.', $harga_clean); // Convert decimal to dot
+            } else {
+                $harga_clean = str_replace(',', '', $harga_clean); // Remove thousand separator
+            }
+        } elseif (strpos($harga_clean, '.') !== false) {
+            // If only dots exist, check if it's Indonesian thousand separator or decimal
+            // Count parts after last dot
+            $parts = explode('.', $harga_clean);
+            if (count($parts) > 2) {
+                // Multiple dots = Indonesian thousand separators
+                $harga_clean = str_replace('.', '', $harga_clean);
+            } elseif (count($parts) == 2) {
+                // Check if last part has exactly 3 digits (likely thousand separator)
+                if (strlen(end($parts)) === 3) {
+                    $harga_clean = str_replace('.', '', $harga_clean); // Remove thousand separator
+                }
+                // If not 3 digits, assume it's decimal and keep as is
+            }
+        }
+
+        $harga_numeric = (float) $harga_clean;
+
+        if (!is_numeric($harga_clean) || $harga_numeric <= 0) {
+            jsonResponse(false, "Harga harus berupa angka positif", null, 400);
+        }
+    }
+
+    $conn = getConnection();
+
+    // Check if menu exists
+    $check_sql = "SELECT * FROM menus WHERE id_menu = :id_menu";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bindParam(':id_menu', $id_menu);
+    $check_stmt->execute();
+
+    if ($check_stmt->rowCount() === 0) {
+        jsonResponse(false, "Menu tidak ditemukan", null, 404);
+    }
+
+    $current_menu = $check_stmt->fetch();
+
+    
+    // Handle image upload if exists
+    $gambar = $current_menu['gambar']; // Keep current image
+    if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] === 0) {
+        $upload_dir = '/opt/lampp/htdocs/tugas_kafe_server/uploads';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        $new_gambar = uploadImage($_FILES['gambar'], $upload_dir);
+        if ($new_gambar) {
+            // Delete old image if exists
+            if ($current_menu['gambar'] && file_exists($upload_dir . '/' . $current_menu['gambar'])) {
+                unlink($upload_dir . '/' . $current_menu['gambar']);
+            }
+            $gambar = $new_gambar;
+        }
+    }
+
+    // Build dynamic update query
+    $update_fields = [];
+    $params = [];
+
+    if ($nama_menu !== null && $nama_menu !== '') {
+        $update_fields[] = "nama_menu = :nama_menu";
+        $params[':nama_menu'] = $nama_menu;
+    }
+    if ($harga_numeric !== null) {
+        $update_fields[] = "harga = :harga";
+        $params[':harga'] = $harga_numeric; // Use harga_numeric
+    }
+    if ($id_kategori !== null && $id_kategori !== '') {
+        $update_fields[] = "id_kategori = :id_kategori";
+        $params[':id_kategori'] = (int) $id_kategori;
+    }
+    if ($gambar !== null) {
+        $update_fields[] = "gambar = :gambar";
+        $params[':gambar'] = $gambar;
+    }
+    if ($status_tersedia !== null) {
+        $update_fields[] = "status_tersedia = :status_tersedia";
+        $params[':status_tersedia'] = $status_tersedia;
+    }
+
+    if (empty($update_fields)) {
+        jsonResponse(false, "Tidak ada data yang diupdate", null, 400);
+    }
+
+    // Add id_menu to parameters
+    $params[':id_menu'] = $id_menu;
+
+    $sql = "UPDATE menus SET " . implode(', ', $update_fields) . " WHERE id_menu = :id_menu";
+    $stmt = $conn->prepare($sql);
+
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+
+    if ($stmt->execute()) {
+        // Get updated data
+        $updated_sql = "SELECT m.*, km.nama_kategori
+                        FROM menus m
+                        JOIN kategori_menu km ON m.id_kategori = km.id_kategori
+                        WHERE m.id_menu = :id_menu";
+        $updated_stmt = $conn->prepare($updated_sql);
+        $updated_stmt->bindParam(':id_menu', $id_menu);
+        $updated_stmt->execute();
+
+        $updated_menu = $updated_stmt->fetch();
+        $updated_menu['harga_formatted'] = formatRupiah($updated_menu['harga']);
+        $updated_menu['gambar'] = $updated_menu['gambar'] ? 'http://localhost/tugas_kafe_server/uploads/' . $updated_menu['gambar'] : null;
+
+        jsonResponse(true, "Menu berhasil diupdate", $updated_menu);
+    } else {
+        jsonResponse(false, "Gagal mengupdate menu", null, 500);
+    }
+
+} catch(PDOException $e) {
+    jsonResponse(false, "Error: " . $e->getMessage(), null, 500);
+}
+?>

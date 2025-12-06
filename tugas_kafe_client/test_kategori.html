@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Kategori</title>
+    <script src="config.js"></script>
+</head>
+<body>
+    <h1>Test Kategori Menu</h1>
+    <button onclick="testCategories()">Test Kategori</button>
+    <div id="result"></div>
+
+    <h2>Kategori Dropdown:</h2>
+    <select id="menuCategory">
+        <option value="">Pilih Kategori</option>
+    </select>
+
+    <script>
+        async function testCategories() {
+            try {
+                console.log('Testing categories...');
+                const result = await apiRequest(API_CONFIG.ENDPOINTS.MENUS.READ);
+
+                document.getElementById('result').innerHTML = `
+                    <h3>API Response:</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+
+                if (result.success && result.data) {
+                    const select = document.getElementById('menuCategory');
+                    select.innerHTML = '<option value="">Pilih Kategori</option>';
+
+                    result.data.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id_kategori || 1;
+                        option.textContent = category.kategori;
+                        select.appendChild(option);
+                    });
+
+                    console.log('Categories loaded:', result.data.length);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
